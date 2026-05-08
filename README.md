@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Client Wishlist Dashboard
 
-## Getting Started
+Internal tool for managing client software wishlists. Built with Next.js 15, Supabase, and Tailwind CSS.
 
-First, run the development server:
+## Accounts
+
+Three pre-seeded accounts (no public signup):
+
+| Email | Role | Access |
+|---|---|---|
+| `eric@example.com` | employee | Manages his own clients |
+| `prithvi@example.com` | employee | Manages his own clients |
+| `admin@example.com` | admin | Sees everything, full edit access |
+
+## Setup
+
+### 1. Supabase
+
+1. Create a project at [supabase.com](https://supabase.com) (free tier works)
+2. Go to **SQL Editor** and run `supabase/migrations/0001_init.sql`
+3. Copy your project URL, anon key, and service role key
+
+### 2. Environment Variables
+
+```bash
+cp .env.example .env.local
+```
+
+Fill in:
+- `NEXT_PUBLIC_SUPABASE_URL` — your Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — your anon/public key
+- `SUPABASE_SERVICE_ROLE_KEY` — service role key (server-only, never expose)
+- `SEED_ERIC_EMAIL`, `SEED_ERIC_PASSWORD` — Eric's credentials
+- `SEED_PRITHVI_EMAIL`, `SEED_PRITHVI_PASSWORD` — Prithvi's credentials
+- `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` — Admin's credentials
+
+### 3. Seed Accounts
+
+```bash
+npm run seed
+```
+
+This creates the three auth users and their profile rows. Safe to re-run (idempotent).
+
+### 4. Run
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) and log in with a seeded account.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 5. Deploy to Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Push to `main` — Vercel auto-deploys (repo is already connected)
+2. In Vercel → **Settings → Environment Variables**, add:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - (Skip the `SEED_*` vars in production)
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Framework:** Next.js 15 (App Router) + TypeScript
+- **Styling:** Tailwind CSS + shadcn/ui
+- **Auth + DB:** Supabase (Postgres, Auth, Row Level Security)
+- **Forms:** react-hook-form + zod
+- **Icons:** lucide-react
+- **Font:** Geist Sans
